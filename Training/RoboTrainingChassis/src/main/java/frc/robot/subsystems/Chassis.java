@@ -5,6 +5,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
+import edu.wpi.first.wpilibj.DigitalSource;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.ChassisConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -15,6 +18,9 @@ public class Chassis extends SubsystemBase {
   private final WPI_VictorSPX leftMotor;
   private final WPI_VictorSPX rightSlaveMotor;
   private final WPI_VictorSPX leftSlaveMotor;
+
+  private Encoder rightEncoder;
+  private Encoder leftEncoder;
 
   private final DifferentialDrive differentialDrive;
   private static Chassis instance;
@@ -39,11 +45,29 @@ public class Chassis extends SubsystemBase {
     leftSlaveMotor.configFactoryDefault();
     leftSlaveMotor.follow(leftMotor);
     
+    leftEncoder=new Encoder(ChassisConstants.LEFT_ENCODER_SCORE[0], ChassisConstants.LEFT_ENCODER_SCORE[1]);
+    rightEncoder=new Encoder(ChassisConstants.RIGHT_ENCODER_SCORE[0], ChassisConstants.RIGHT_ENCODER_SCORE[1]);
+
+    resetEncoders();
+
     differentialDrive = new DifferentialDrive(leftMotor, rightMotor);
   }
 
   public void drive(final double forwardSpeed, final double rotationSpeed) {
     differentialDrive.arcadeDrive(rotationSpeed, forwardSpeed);
+  }
+
+  public void resetEncoders(){
+    rightEncoder.reset();
+    leftEncoder.reset();
+  }
+
+  public Encoder getLeftEncoder(){
+    return leftEncoder;
+  }
+  
+  public Encoder getrightEncoder(){
+    return rightEncoder;
   }
 
   @Override

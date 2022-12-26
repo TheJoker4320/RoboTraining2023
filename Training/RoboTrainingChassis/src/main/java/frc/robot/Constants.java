@@ -20,6 +20,9 @@ public final class Constants {
         public static final int LEFT_SLAVE_MOTOR_PORT = 16;
         
         public static final boolean SET_INVERTED = true;
+        public static final int[] LEFT_ENCODER_SCORE= {0,1};
+        public static final int[] RIGHT_ENCODER_SCORE= {2,3};
+
     }
     public static final class JoystickConstants {
         public static final int DRIVING_JOYSTICK_PORT = 1;
