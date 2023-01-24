@@ -47,7 +47,7 @@ public final class Constants {
         public static final int Kd = 0;
 
         public static final double TOLERANCE = 0.06; //6cm
-        public static final double SET_POINT = 1;
+        public static final double SET_POINT = 3;
         // TODO: Add calculation explaining why the gear ratio is 5.0:1
         public static final double GEAR_RATIO = 5.25;
         public static final int TICKS_IN_ENCODER = 256;  
