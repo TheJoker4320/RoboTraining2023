@@ -20,20 +20,39 @@ public final class Constants {
         public static final int LEFT_SLAVE_MOTOR_PORT = 16;
         
         public static final boolean SET_INVERTED = true;
-        public static final int[] LEFT_ENCODER_SCORE= {0,1};
-        public static final int[] RIGHT_ENCODER_SCORE= {2,3};
+        public static final int[] LEFT_ENCODER_SCORE= {2,3};
+        public static final int[] RIGHT_ENCODER_SCORE= {0,1};
 
     }
+    public static final class ShooterConstants {
+        public static final int SHOOTER_MOTOR_PORT = 12;
+    }
+
     public static final class JoystickConstants {
         public static final int DRIVING_JOYSTICK_PORT = 1;
         public static final int BUTTONS_JOYSTICK_PORT = 0;
+
+        public static final int BUTTON_NUMBER_COLLECT = 1;
+        public static final int BUTTON_NUMBER_SHOOT = 5;
+    }
+
+    public static final class CollectorConstants {
+        public static final int RIGHT_COLLECTOR_MOTOR = 8;
+        public static final int LEFT_COLLECTOR_MOTOR = 9;
     }
 
     public static final class PidConstants {
-        public static final int kp = 3;
-        public static final int ki = 0;
-        public static final int kd = 1;
+        public static final double Kp = 1.7954;
+        public static final int Ki = 0;
+        public static final int Kd = 0;
 
-        public static final int setPoint = 1088;
+        public static final double SET_POINT = 0.5;
+
+        public static final double GEAR_RATIO = ((40.0/12.0) * (44.0/40.0) * (54.0/30.0))/3.0; //Not 2.2 
+        public static final int TICKS_IN_ENCODER = 256;  
+        public static final double CIRCUMFARANCE = Math.PI * 0.1016;
+        public static final double ONE_WHEEL_TO_TICKS = GEAR_RATIO * TICKS_IN_ENCODER;
+
+        public static final double RATIO_TICKS_TO_METERS = CIRCUMFARANCE / ONE_WHEEL_TO_TICKS;
     }
 }

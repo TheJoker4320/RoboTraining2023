@@ -4,12 +4,16 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.ChassisConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,13 +25,15 @@ public class Chassis extends SubsystemBase {
   private final WPI_VictorSPX rightSlaveMotor;
   private final WPI_VictorSPX leftSlaveMotor;
 
+  private final AHRS navXGyro = new AHRS();
+
   private Encoder rightEncoder;
   private Encoder leftEncoder;
 
   private final DifferentialDrive differentialDrive;
   private static Chassis instance;
 
-  private final PIDController pidController = new PIDController(Constants.PidConstants.kp, Constants.PidConstants.ki, Constants.PidConstants.kd);
+  private final PIDController pidController = new PIDController(Constants.PidConstants.Kp, Constants.PidConstants.Ki, Constants.PidConstants.Kd);
 
   public static Chassis getInstance() {
     if (instance == null) instance = new Chassis();
@@ -36,7 +42,7 @@ public class Chassis extends SubsystemBase {
 
   private Chassis() {
     pidController.reset();
-    pidController.setTolerance(5, 10);
+    pidController.setTolerance(0.1);
 
     rightMotor = new WPI_VictorSPX(ChassisConstants.RIGHT_MASTER_MOTOR_PORT);
     rightMotor.configFactoryDefault();
@@ -55,6 +61,9 @@ public class Chassis extends SubsystemBase {
     leftEncoder=new Encoder(ChassisConstants.LEFT_ENCODER_SCORE[0], ChassisConstants.LEFT_ENCODER_SCORE[1]);
     rightEncoder=new Encoder(ChassisConstants.RIGHT_ENCODER_SCORE[0], ChassisConstants.RIGHT_ENCODER_SCORE[1]);
 
+    leftEncoder.setDistancePerPulse(Constants.PidConstants.RATIO_TICKS_TO_METERS);
+    rightEncoder.setDistancePerPulse(Constants.PidConstants.RATIO_TICKS_TO_METERS);
+
     resetEncoders();
 
 
@@ -62,12 +71,15 @@ public class Chassis extends SubsystemBase {
   }
 
   public void drive(final double forwardSpeed, final double rotationSpeed) {
+    SmartDashboard.putNumber("Encoder Value Right", getrightEncoder().getDistance());
+    SmartDashboard.putNumber("Encoder Value Left", getLeftEncoder().getDistance());
     differentialDrive.arcadeDrive(rotationSpeed, forwardSpeed);
   }
 
   public void autonomouseDrive() {
-    leftMotor.set(pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.setPoint));
-    rightMotor.set(pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.setPoint));
+    differentialDrive.arcadeDrive(0, pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));
+    /*leftMotor.set(pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT));
+    rightMotor.set(pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));*/
   }
 
   public void resetEncoders(){
