@@ -43,11 +43,11 @@ public final class Constants {
 
     public static final class PidConstants {
         public static final double Kp = 1.40745825;
-        public static final int Ki = 0;
-        public static final int Kd = 0;
+        public static final double Ki = 0;
+        public static final double Kd = 0.1;
 
         public static final double TOLERANCE = 0.06; //6cm
-        public static final double SET_POINT = 3;
+        public static final double SET_POINT = 1;
         // TODO: Add calculation explaining why the gear ratio is 5.0:1
         public static final double GEAR_RATIO = 5.25;
         public static final int TICKS_IN_ENCODER = 256;  
@@ -55,5 +55,10 @@ public final class Constants {
         public static final double ONE_WHEEL_TO_TICKS = GEAR_RATIO * TICKS_IN_ENCODER;
 
         public static final double RATIO_TICKS_TO_METERS = CIRCUMFARANCE / ONE_WHEEL_TO_TICKS;
+    }
+
+    public static final class PneuomaticsConstants {
+        public static final int FIRST_SOLENOID_PORT = 0;
+        public static final int SECOND_SOLENOID_PORT = 1;
     }
 }

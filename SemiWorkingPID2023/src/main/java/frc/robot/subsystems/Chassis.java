@@ -63,21 +63,22 @@ public class Chassis extends SubsystemBase {
     leftEncoder.setDistancePerPulse(Constants.PidConstants.RATIO_TICKS_TO_METERS);
     rightEncoder.setDistancePerPulse(Constants.PidConstants.RATIO_TICKS_TO_METERS);
     
-    resetEncoders();
+    rightEncoder.reset();
+    leftEncoder.reset();
 
     differentialDrive = new DifferentialDrive(leftMotor, rightMotor);
   }
 
   public void drive(final double forwardSpeed, final double rotationSpeed) {
-    SmartDashboard.putNumber("Encoder Value Right", getrightEncoder().getDistance());
-    SmartDashboard.putNumber("Encoder Value Left", getLeftEncoder().getDistance());
+    SmartDashboard.putNumber("Encoder Value Right", rightEncoder.getDistance());
+    SmartDashboard.putNumber("Encoder Value Left", leftEncoder.getDistance());
     differentialDrive.arcadeDrive(-rotationSpeed, -forwardSpeed);
   }
 
   public void autonomouseDrive() {
-    differentialDrive.arcadeDrive(0, pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));
-    /*leftMotor.set(pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT));
-    rightMotor.set(pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));*/
+    //differentialDrive.arcadeDrive(0,(pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
+    leftMotor.set(-0.5 * (pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
+    rightMotor.set(0.5 * pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));
   }
 
   public void resetEncoders(){
@@ -89,7 +90,7 @@ public class Chassis extends SubsystemBase {
     return leftEncoder;
   }
   
-  public Encoder getrightEncoder(){
+  public Encoder getRightEncoder(){
     return rightEncoder;
   }
 
