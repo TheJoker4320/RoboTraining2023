@@ -5,11 +5,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.PneuomaticsSubsystem;
 
 public class ShifterChangerCommand extends CommandBase {
+  boolean state;
   /** Creates a new ShifterChangerCommand. */
-  public ShifterChangerCommand(PneuomaticSubsystem PneuomaticSubsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public ShifterChangerCommand(PneuomaticsSubsystem pneuomaticSubsystem) {
+
+    addRequirements(pneuomaticSubsystem);
   }
 
   // Called when the command is initially scheduled.
