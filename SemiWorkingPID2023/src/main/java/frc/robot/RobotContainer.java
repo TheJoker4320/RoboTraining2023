@@ -11,9 +11,11 @@ import frc.robot.Constants.JoystickConstants;
 import frc.robot.commands.CollectBySpeed;
 import frc.robot.commands.DriveByDistance;
 import frc.robot.commands.DriveBySpeed;
+import frc.robot.commands.ShifterChangerCommand;
 import frc.robot.commands.ShootBySpeed;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.Collector;
+import frc.robot.subsystems.PneuomaticsSubsystem;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -30,6 +32,7 @@ public class RobotContainer {
   private final Chassis chassis = Chassis.getInstance();
   private final Collector collector = Collector.getInstance();
   private final Shooter shooter = Shooter.getInstantce();
+  private final PneuomaticsSubsystem pneuomaticsSubsystem = PneuomaticsSubsystem.getInstance();
 
   public Joystick joystick = new Joystick(JoystickConstants.DRIVING_JOYSTICK_PORT);
   public XboxController xboxController = new XboxController(JoystickConstants.BUTTONS_JOYSTICK_PORT);
@@ -55,7 +58,10 @@ public class RobotContainer {
     driveMeterOne.onTrue(new DriveByDistance());
     JoystickButton collectButton = new JoystickButton(joystick, Constants.JoystickConstants.BUTTON_NUMBER_COLLECT);
     collectButton.whileTrue(new CollectBySpeed(collector));
-    
+    JoystickButton ChangeShifterState = new JoystickButton(xboxController, XboxController.Button.kA.value);
+    ChangeShifterState.onTrue(new ShifterChangerCommand(pneuomaticsSubsystem));
+
+
     JoystickButton shootButton = new JoystickButton(joystick, Constants.JoystickConstants.BUTTON_NUMBER_SHOOT);
     shootButton.whileTrue(new ShootBySpeed(shooter));
     chassis.setDefaultCommand(new DriveBySpeed(chassis, () -> joystick.getY(), () -> joystick.getZ()));
