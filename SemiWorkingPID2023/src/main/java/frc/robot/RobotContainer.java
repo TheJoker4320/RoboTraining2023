@@ -61,10 +61,9 @@ public class RobotContainer {
     JoystickButton ChangeShifterState = new JoystickButton(xboxController, XboxController.Button.kA.value);
     ChangeShifterState.onTrue(new ShifterChangerCommand(pneuomaticsSubsystem));
 
-
     JoystickButton shootButton = new JoystickButton(joystick, Constants.JoystickConstants.BUTTON_NUMBER_SHOOT);
     shootButton.whileTrue(new ShootBySpeed(shooter));
-    chassis.setDefaultCommand(new DriveBySpeed(chassis, () -> joystick.getY(), () -> joystick.getZ()));
+    chassis.setDefaultCommand(new DriveBySpeed(chassis, () -> joystick.getY(), () -> 0));
   }
 
   /**

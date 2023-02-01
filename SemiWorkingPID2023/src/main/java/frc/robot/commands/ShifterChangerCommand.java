@@ -4,24 +4,39 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.PneuomaticsSubsystem;
 
 public class ShifterChangerCommand extends CommandBase {
+  boolean originalState;
   boolean state;
+  static int counter;
+  PneuomaticsSubsystem pneuomaticsSubsystem;
+  static{
+    counter=0;
+  }
   /** Creates a new ShifterChangerCommand. */
-  public ShifterChangerCommand(PneuomaticsSubsystem pneuomaticSubsystem) {
+  public ShifterChangerCommand(PneuomaticsSubsystem pneuomaticsSubsystem) {
 
-    addRequirements(pneuomaticSubsystem);
+    this.pneuomaticsSubsystem = pneuomaticsSubsystem;
+    addRequirements(pneuomaticsSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    state = !pneuomaticsSubsystem.getState();
+    counter++;
+    SmartDashboard.putNumber("Executes", counter);
+    pneuomaticsSubsystem.changeState(state);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -30,6 +45,6 @@ public class ShifterChangerCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

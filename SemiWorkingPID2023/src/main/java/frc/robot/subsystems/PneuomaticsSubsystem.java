@@ -8,11 +8,12 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PneuomaticsConstants;
 
 public class PneuomaticsSubsystem extends SubsystemBase {
-  Compressor pcmCompressor = new Compressor(0, PneumaticsModuleType.CTREPCM);
+  private Compressor compressor;
   DoubleSolenoid shifterDoublePCM = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, PneuomaticsConstants.FIRST_SOLENOID_PORT, PneuomaticsConstants.SECOND_SOLENOID_PORT);
   static PneuomaticsSubsystem instance = null;
 
@@ -23,13 +24,20 @@ public class PneuomaticsSubsystem extends SubsystemBase {
     
     return instance;
   }
+  
   /** Creates a new PneuomaticsSubsysten. */
   private PneuomaticsSubsystem() {
+    compressor = new Compressor(PneumaticsModuleType.CTREPCM);
     shifterDoublePCM.set(Value.kReverse);
   }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Current compressor pressure in psi:", compressor.getPressure());
+    /*if (compressor.getPressure() > 60)
+      compressor.disable();
+    if (compressor.getPressure() < 30)
+      compressor.enableDigital();*/
     // This method will be called once per scheduler run
   }
 

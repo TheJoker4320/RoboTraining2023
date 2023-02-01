@@ -19,6 +19,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Chassis extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
+  private double overallDistance;
+  private double Xdisplacement = 0;
+  private double Ydisplacement = 0;
+  private double Zdisplacement = 0;
+
+  private double overallSpeed = 0;
+  private double Xacceleration = 0;
+  private double Yvelocity = 0;
+  private double Zvelocity = 0;
   private final WPI_VictorSPX rightMotor;
   private final WPI_VictorSPX leftMotor;
   private final WPI_VictorSPX rightSlaveMotor;
@@ -40,6 +49,7 @@ public class Chassis extends SubsystemBase {
   }
 
   private Chassis() {
+    navXGyro.resetDisplacement();
     pidController.reset();
     pidController.setTolerance(PidConstants.TOLERANCE);
 
@@ -70,15 +80,25 @@ public class Chassis extends SubsystemBase {
   }
 
   public void drive(final double forwardSpeed, final double rotationSpeed) {
+    /*Xacceleration = navXGyro.getWorldLinearAccelX();
+    Xdisplacement = navXGyro.getDisplacementX();
+    Ydisplacement = navXGyro.getDisplacementY();
+    Zdisplacement = navXGyro.getDisplacementZ();
+    overallDistance = Math.
+    overallDistance = Math.sqrt(Xdisplacement * Xdisplacement + Ydisplacement * Ydisplacement + Zdisplacement * Zdisplacement);
+    SmartDashboard.putNumber("NavX distantce", overallDistance);*/
     SmartDashboard.putNumber("Encoder Value Right", rightEncoder.getDistance());
-    SmartDashboard.putNumber("Encoder Value Left", leftEncoder.getDistance());
+    SmartDashboard.putNumber("Encoder Value Left", leftEncoder.getDistance());;
     differentialDrive.arcadeDrive(-rotationSpeed, -forwardSpeed);
   }
 
   public void autonomouseDrive() {
     //differentialDrive.arcadeDrive(0,(pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
-    leftMotor.set(-0.5 * (pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
-    rightMotor.set(0.5 * pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));
+    SmartDashboard.putNumber("Tolerance", pidController.getPositionTolerance());
+    SmartDashboard.putNumber("PID Value Right", pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT));
+    SmartDashboard.putNumber("PID Value Left", pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));;
+    leftMotor.set(-1 * (pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
+    rightMotor.set( pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));
   }
 
   public void resetEncoders(){
