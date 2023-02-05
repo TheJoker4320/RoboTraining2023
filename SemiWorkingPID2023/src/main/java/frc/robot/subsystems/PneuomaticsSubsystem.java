@@ -33,7 +33,7 @@ public class PneuomaticsSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Current compressor pressure in psi:", compressor.getPressure());
+    SmartDashboard.putBoolean("Current State", getState());
     /*if (compressor.getPressure() > 60)
       compressor.disable();
     if (compressor.getPressure() < 30)

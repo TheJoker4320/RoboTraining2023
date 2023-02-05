@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -42,12 +46,23 @@ public final class Constants {
     }
 
     public static final class PidConstants {
-        public static final double Kp = 1;
+        //SYSID - KP = 1.5594
+        public static final double Kp = 1.0;
         public static final double Ki = 0;
         public static final double Kd = 0;
+        //------------------------------------
+        public static final double Ks = 0.4786;
+        public static final double Kv = 1.2884;
+        public static final double Ka = 17.546;
+        public static final double kTrackWidth = 0.7;
+        public static final DifferentialDriveKinematics kDifferentialDriveKinematics= new DifferentialDriveKinematics(kTrackWidth);
+        public static final double kMaxSpeed = 3.0;
+        public static final double kMaxAcceleration = 3.0;
+        public static final double kRemeseteB = 2;
+        public static final double kRemeseteZeta = 0.7;
 
         public static final double TOLERANCE = 0.00; //6cm
-        public static final double SET_POINT = 1;
+        public static final double SET_POINT = 3;
         // TODO: Add calculation explaining why the gear ratio is 5.0:1
         public static final double GEAR_RATIO_ENCODER = 27/5;
         public static final int TICKS_IN_ENCODER = 256;  

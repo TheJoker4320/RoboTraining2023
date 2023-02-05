@@ -34,6 +34,12 @@ public class DriveBySpeed extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    /*if (forwardSpeed.getAsDouble() == 0) {
+      driveTrainSubsystem.drive(forwardSpeed.getAsDouble(), 0);
+    }
+    else {
+      driveTrainSubsystem.drive(0.15, 0);
+    }*/
     driveTrainSubsystem.drive(forwardSpeed.getAsDouble(), rotationSpeed.getAsDouble());
   }
 
