@@ -104,8 +104,8 @@ public class RobotContainer {
    */
 
   private void configureButtonBindings() {
-    JoystickButton driveMeterOne = new JoystickButton(xboxController, XboxController.Button.kX.value);
-    driveMeterOne.onTrue(new DriveByDistance());
+    //JoystickButton driveMeterOne = new JoystickButton(xboxController, XboxController.Button.kX.value);
+    //driveMeterOne.onTrue(new DriveByDistance());
     JoystickButton collectButton = new JoystickButton(joystick, Constants.JoystickConstants.BUTTON_NUMBER_COLLECT);
     collectButton.whileTrue(new CollectBySpeed(collector));
     JoystickButton ChangeShifterState = new JoystickButton(joystick, 2);
@@ -114,8 +114,8 @@ public class RobotContainer {
     JoystickButton shootButton = new JoystickButton(joystick, Constants.JoystickConstants.BUTTON_NUMBER_SHOOT);
     shootButton.whileTrue(new ShootBySpeed(shooter));
 
-    //JoystickButton Ramsete = new JoystickButton(xboxController, XboxController.Button.kX.value);
-    //Ramsete.onTrue(loadPathplannerTrajectory("paths/TwoMeterCoolPath.wpilib.json", true));
+    JoystickButton Ramsete = new JoystickButton(xboxController, XboxController.Button.kX.value);
+    Ramsete.onTrue(loadPathplannerTrajectory("paths/TwoMeterCoolPath.wpilib.json", true));
   }
 
   ///home/lvuser/deploy/src/main/deploy/pathplanner/generatedJSON/StraigthShort.wpilib.json

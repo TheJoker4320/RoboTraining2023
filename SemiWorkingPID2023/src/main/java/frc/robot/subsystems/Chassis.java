@@ -4,7 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -35,10 +36,10 @@ public class Chassis extends SubsystemBase {
   private double Xacceleration = 0;
   private double Yvelocity = 0;
   private double Zvelocity = 0;
-  private final WPI_VictorSPX rightMotor;
-  private final WPI_VictorSPX leftMotor;
-  private final WPI_VictorSPX rightSlaveMotor;
-  private final WPI_VictorSPX leftSlaveMotor;
+  private final WPI_TalonSRX rightMotor;
+  private final WPI_TalonSRX leftMotor;
+  private final WPI_TalonSRX rightSlaveMotor;
+  private final WPI_TalonSRX leftSlaveMotor;
 
   private final MotorControllerGroup righMotorControllerGroup;
   private final MotorControllerGroup leftMotorControllerGroup;
@@ -84,17 +85,17 @@ public class Chassis extends SubsystemBase {
     counter = 0;
     pidController.setTolerance(PidConstants.TOLERANCE);
 
-    rightMotor = new WPI_VictorSPX(ChassisConstants.RIGHT_MASTER_MOTOR_PORT);
+    rightMotor = new WPI_TalonSRX(ChassisConstants.RIGHT_MASTER_MOTOR_PORT);
     rightMotor.configFactoryDefault();
     
-    rightSlaveMotor = new WPI_VictorSPX(ChassisConstants.RIGHT_SLAVE_MOTOR_PORT);
+    rightSlaveMotor = new WPI_TalonSRX(ChassisConstants.RIGHT_SLAVE_MOTOR_PORT);
     rightSlaveMotor.configFactoryDefault();
     rightSlaveMotor.follow(rightMotor);
 
-    leftMotor = new WPI_VictorSPX(ChassisConstants.LEFT_MASTER_MOTOR_PORT);
+    leftMotor = new WPI_TalonSRX(ChassisConstants.LEFT_MASTER_MOTOR_PORT);
     leftMotor.configFactoryDefault();
 
-    leftSlaveMotor = new WPI_VictorSPX(ChassisConstants.LEFT_SLAVE_MOTOR_PORT);
+    leftSlaveMotor = new WPI_TalonSRX(ChassisConstants.LEFT_SLAVE_MOTOR_PORT);
     leftSlaveMotor.configFactoryDefault();
     leftSlaveMotor.follow(leftMotor);
     
@@ -129,8 +130,10 @@ public class Chassis extends SubsystemBase {
     overallDistance = Math.
     overallDistance = Math.sqrt(Xdisplacement * Xdisplacement + Ydisplacement * Ydisplacement + Zdisplacement * Zdisplacement);
     SmartDashboard.putNumber("NavX distantce", overallDistance);*/
-    SmartDashboard.putNumber("Encoder Value Right", rightEncoder.getDistance());
-    SmartDashboard.putNumber("Encoder Value Left", leftEncoder.getDistance());;
+    SmartDashboard.putNumber("Encoder Value Right", rightEncoder.getDistance() / rightEncoder.getDistancePerPulse());
+    SmartDashboard.putNumber("Encoder Value Left", leftEncoder.getDistance() / leftEncoder.getDistancePerPulse());
+    SmartDashboard.putNumber("Encoder Value Right - Meters",  -1 * rightEncoder.getDistance());
+    SmartDashboard.putNumber("Encoder Value Left - Meters",leftEncoder.getDistance());
     differentialDrive.arcadeDrive(-rotationSpeed, -forwardSpeed);
   }
 
@@ -139,8 +142,8 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putNumber("Tolerance", pidController.getPositionTolerance());
     SmartDashboard.putNumber("PID Value Right", pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT));
     SmartDashboard.putNumber("PID Value Left", pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));;
-    leftMotorControllerGroup.set(-1 * (pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
-    righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
+    leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
+    righMotorControllerGroup.set(-1 * (pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
   }
 
   public void resetEncoders(){
@@ -193,8 +196,6 @@ public class Chassis extends SubsystemBase {
   }
   public void tankDriveWolts(double leftVolts, double rightVolts) {
     counter++;
-    SmartDashboard.putNumber("Encoder Value Right", rightEncoder.getDistance());
-    SmartDashboard.putNumber("Encoder Value Left", leftEncoder.getDistance());;
     SmartDashboard.putNumber("This was called - times", counter);
     righMotorControllerGroup.setVoltage(rightVolts);
     leftMotorControllerGroup.setVoltage(-leftVolts);

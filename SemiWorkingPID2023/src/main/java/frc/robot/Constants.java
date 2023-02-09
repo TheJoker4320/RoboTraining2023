@@ -19,9 +19,9 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 public final class Constants {
     public static final class ChassisConstants {
         public static final int RIGHT_MASTER_MOTOR_PORT = 2;
-        public static final int RIGHT_SLAVE_MOTOR_PORT = 3;
-        public static final int LEFT_MASTER_MOTOR_PORT = 14;
-        public static final int LEFT_SLAVE_MOTOR_PORT = 16;
+        public static final int RIGHT_SLAVE_MOTOR_PORT = 7;
+        public static final int LEFT_MASTER_MOTOR_PORT = 1;
+        public static final int LEFT_SLAVE_MOTOR_PORT = 6;
         
         public static final boolean SET_INVERTED = true;
         public static final int[] LEFT_ENCODER_SCORE= {2,3};
@@ -46,14 +46,15 @@ public final class Constants {
     }
 
     public static final class PidConstants {
-        //SYSID - KP = 1.5594
-        public static final double Kp = 1.0;
+        //SYSID - KP = 1.5594, 1.0051
+        public static final double Kp = 1;
         public static final double Ki = 0;
-        public static final double Kd = 0;
+        public static final double Kd = 0.4;
         //------------------------------------
-        public static final double Ks = 0.4786;
-        public static final double Kv = 1.2884;
-        public static final double Ka = 17.546;
+        public static final double Ks = 0.75;
+        public static final double Kv = 1;
+        public static final double Ka = 1;
+
         public static final double kTrackWidth = 0.7;
         public static final DifferentialDriveKinematics kDifferentialDriveKinematics= new DifferentialDriveKinematics(kTrackWidth);
         public static final double kMaxSpeed = 3.0;
@@ -61,12 +62,12 @@ public final class Constants {
         public static final double kRemeseteB = 2;
         public static final double kRemeseteZeta = 0.7;
 
-        public static final double TOLERANCE = 0.00; //6cm
-        public static final double SET_POINT = 3;
+        public static final double TOLERANCE = 0.01; //6cm
+        public static final double SET_POINT = 2;
         // TODO: Add calculation explaining why the gear ratio is 5.0:1
-        public static final double GEAR_RATIO_ENCODER = 27/5;
+        public static final double GEAR_RATIO_ENCODER = (double)27/5;
         public static final int TICKS_IN_ENCODER = 256;  
-        public static final double CIRCUMFARANCE = Math.PI * 0.1016;
+        public static final double CIRCUMFARANCE = Math.PI * 0.0970; //DO NOT CHANGE!!!!
         public static final double ONE_WHEEL_TO_TICKS = GEAR_RATIO_ENCODER * TICKS_IN_ENCODER;
 
         public static final double RATIO_TICKS_TO_METERS = CIRCUMFARANCE / ONE_WHEEL_TO_TICKS;
