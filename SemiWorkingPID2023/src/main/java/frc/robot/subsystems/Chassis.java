@@ -73,6 +73,14 @@ public class Chassis extends SubsystemBase {
   }
 
   private Chassis() {
+
+    finishedPartOne = false;
+    finishedPartTwo = false;
+    finishedPartThree = false;
+    finishedPartFour = false;
+
+    //--------------------
+
     timer = new Timer();
     timer.start();
     overallDistance = 0;
@@ -99,14 +107,15 @@ public class Chassis extends SubsystemBase {
     leftSlaveMotor.configFactoryDefault();
     leftSlaveMotor.follow(leftMotor);
     
-    leftEncoder=new Encoder(ChassisConstants.LEFT_ENCODER_SCORE[0], ChassisConstants.LEFT_ENCODER_SCORE[1]);
-    rightEncoder=new Encoder(ChassisConstants.RIGHT_ENCODER_SCORE[0], ChassisConstants.RIGHT_ENCODER_SCORE[1]);
+    leftEncoder = new Encoder(ChassisConstants.LEFT_ENCODER_SCORE[0], ChassisConstants.LEFT_ENCODER_SCORE[1]);
+    rightEncoder = new Encoder(ChassisConstants.RIGHT_ENCODER_SCORE[0], ChassisConstants.RIGHT_ENCODER_SCORE[1]);
 
     leftEncoder.setDistancePerPulse(Constants.PidConstants.RATIO_TICKS_TO_METERS);
     rightEncoder.setDistancePerPulse(Constants.PidConstants.RATIO_TICKS_TO_METERS);
 
     righMotorControllerGroup = new MotorControllerGroup(rightMotor, rightSlaveMotor);
     leftMotorControllerGroup = new MotorControllerGroup(leftMotor, leftSlaveMotor);
+    leftMotorControllerGroup.setInverted(true);
     
     differentialDrive = new DifferentialDrive(leftMotorControllerGroup, righMotorControllerGroup);
 
@@ -132,18 +141,19 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putNumber("NavX distantce", overallDistance);*/
     SmartDashboard.putNumber("Encoder Value Right", rightEncoder.getDistance() / rightEncoder.getDistancePerPulse());
     SmartDashboard.putNumber("Encoder Value Left", leftEncoder.getDistance() / leftEncoder.getDistancePerPulse());
-    SmartDashboard.putNumber("Encoder Value Right - Meters",  -1 * rightEncoder.getDistance());
-    SmartDashboard.putNumber("Encoder Value Left - Meters",leftEncoder.getDistance());
-    differentialDrive.arcadeDrive(-rotationSpeed, -forwardSpeed);
+ 
+    differentialDrive.arcadeDrive(-forwardSpeed, -rotationSpeed);
   }
 
   public void autonomouseDrive() {
+    SmartDashboard.putNumber("Encoder Value Right - Meters",rightEncoder.getDistance());
+    SmartDashboard.putNumber("Encoder Value Left - Meters",leftEncoder.getDistance());
     //differentialDrive.arcadeDrive(0,(pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
     SmartDashboard.putNumber("Tolerance", pidController.getPositionTolerance());
     SmartDashboard.putNumber("PID Value Right", pidController.calculate(leftEncoder.getDistance(), Constants.PidConstants.SET_POINT));
-    SmartDashboard.putNumber("PID Value Left", pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));;
+    SmartDashboard.putNumber("PID Value Left", pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT));
     leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
-    righMotorControllerGroup.set(-1 * (pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
+    righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.PidConstants.SET_POINT)));
   }
 
   public void resetEncoders(){
@@ -198,7 +208,7 @@ public class Chassis extends SubsystemBase {
     counter++;
     SmartDashboard.putNumber("This was called - times", counter);
     righMotorControllerGroup.setVoltage(rightVolts);
-    leftMotorControllerGroup.setVoltage(-leftVolts);
+    leftMotorControllerGroup.setVoltage(leftVolts);
     /*rightMotor.configVoltageCompSaturation(rightVolts);
     leftMotor.configVoltageCompSaturation(leftVolts);
     rightMotor.enableVoltageCompensation(true);
@@ -232,5 +242,85 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putNumber("Distance traveled", overallDistance);
     SmartDashboard.putNumber("acceleration", currentAccel);
     SmartDashboard.putNumber("velocity", currentVelocity);
+  }
+
+  //-----------------------------------------------------------------
+  //-----------RAMSETE COMMAND REPLACEMENT WITH MANUAL PID-----------
+  //-----------------------------------------------------------------
+
+  public boolean finishedPathSegment(int segment, double tolerance)
+  {
+    if (segment == 1)
+    {
+      boolean rightCorrect = (Constants.ConstantsForPath.RIGHT_SETPOINT_ONE + tolerance > rightEncoder.getDistance() && Constants.ConstantsForPath.RIGHT_SETPOINT_ONE - tolerance < rightEncoder.getDistance());
+      boolean leftCorrect = (Constants.ConstantsForPath.LEFT_SETPOINT_ONE + tolerance > leftEncoder.getDistance() && Constants.ConstantsForPath.LEFT_SETPOINT_ONE - tolerance < leftEncoder.getDistance());
+
+      return (rightCorrect && leftCorrect);
+    }
+    else if (segment == 2)
+    {
+      boolean rightCorrect = (Constants.ConstantsForPath.RIGHT_SETPOINT_TWO + tolerance > rightEncoder.getDistance() && Constants.ConstantsForPath.RIGHT_SETPOINT_TWO - tolerance < rightEncoder.getDistance());
+      boolean leftCorrect = (Constants.ConstantsForPath.LEFT_SETPOINT_TWO + tolerance > leftEncoder.getDistance() && Constants.ConstantsForPath.LEFT_SETPOINT_TWO - tolerance < leftEncoder.getDistance());
+
+      return (rightCorrect && leftCorrect);
+    }
+    else if (segment == 3)
+    {
+      boolean rightCorrect = (Constants.ConstantsForPath.RIGHT_SETPOINT_THREE + tolerance > rightEncoder.getDistance() && Constants.ConstantsForPath.RIGHT_SETPOINT_THREE - tolerance < rightEncoder.getDistance());
+      boolean leftCorrect = (Constants.ConstantsForPath.LEFT_SETPOINT_THREE + tolerance > leftEncoder.getDistance() && Constants.ConstantsForPath.LEFT_SETPOINT_THREE - tolerance < leftEncoder.getDistance());
+
+      return (rightCorrect && leftCorrect);
+    }
+    else if (segment == 4)
+    {
+      boolean rightCorrect = (Constants.ConstantsForPath.RIGHT_SETPOINT_FOUR + tolerance > rightEncoder.getDistance() && Constants.ConstantsForPath.RIGHT_SETPOINT_FOUR - tolerance < rightEncoder.getDistance());
+      boolean leftCorrect = (Constants.ConstantsForPath.LEFT_SETPOINT_FOUR + tolerance > leftEncoder.getDistance() && Constants.ConstantsForPath.LEFT_SETPOINT_FOUR - tolerance < leftEncoder.getDistance());
+
+      return (rightCorrect && leftCorrect);
+    }
+    else
+      return false;
+  }
+
+  boolean finishedPartOne;
+  boolean finishedPartTwo;
+  boolean finishedPartThree;
+  boolean finishedPartFour;
+
+  public boolean followPath()
+  {
+    SmartDashboard.putNumber("Encoder Value Right - Meters",rightEncoder.getDistance());
+    SmartDashboard.putNumber("Encoder Value Left - Meters",leftEncoder.getDistance());
+
+    if (!finishedPartOne)
+    {
+      leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.ConstantsForPath.LEFT_SETPOINT_ONE)));
+      righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_ONE)));
+
+      finishedPartOne = finishedPathSegment(1, 0.03);
+    }
+    else if (!finishedPartTwo)
+    {
+      leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.ConstantsForPath.LEFT_SETPOINT_TWO)));
+      righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_TWO)));
+
+      finishedPartTwo = finishedPathSegment(2, 0.03);
+    }
+    else if (!finishedPartThree)
+    {
+      leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.ConstantsForPath.LEFT_SETPOINT_THREE)));
+      righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_THREE)));
+
+      finishedPartThree = finishedPathSegment(3, 0.03);
+    }
+    else if (!finishedPartFour)
+    {
+      leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.ConstantsForPath.LEFT_SETPOINT_FOUR)));
+      righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_FOUR)));
+
+      finishedPartFour = finishedPathSegment(4, 0.01);
+    }
+
+    return finishedPartFour;
   }
 }

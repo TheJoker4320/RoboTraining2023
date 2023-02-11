@@ -21,7 +21,7 @@ public final class Constants {
         public static final int RIGHT_MASTER_MOTOR_PORT = 2;
         public static final int RIGHT_SLAVE_MOTOR_PORT = 7;
         public static final int LEFT_MASTER_MOTOR_PORT = 1;
-        public static final int LEFT_SLAVE_MOTOR_PORT = 6;
+        public static final int LEFT_SLAVE_MOTOR_PORT = 3;
         
         public static final boolean SET_INVERTED = true;
         public static final int[] LEFT_ENCODER_SCORE= {2,3};
@@ -49,11 +49,11 @@ public final class Constants {
         //SYSID - KP = 1.5594, 1.0051
         public static final double Kp = 1;
         public static final double Ki = 0;
-        public static final double Kd = 0.4;
+        public static final double Kd = 0; //0.4
         //------------------------------------
-        public static final double Ks = 0.75;
-        public static final double Kv = 1;
-        public static final double Ka = 1;
+        public static final double Ks = 0.53418;
+        public static final double Kv = 2.916;
+        public static final double Ka = 4.3361;
 
         public static final double kTrackWidth = 0.7;
         public static final DifferentialDriveKinematics kDifferentialDriveKinematics= new DifferentialDriveKinematics(kTrackWidth);
@@ -63,11 +63,11 @@ public final class Constants {
         public static final double kRemeseteZeta = 0.7;
 
         public static final double TOLERANCE = 0.01; //6cm
-        public static final double SET_POINT = 2;
+        public static final double SET_POINT = 5;
         // TODO: Add calculation explaining why the gear ratio is 5.0:1
         public static final double GEAR_RATIO_ENCODER = (double)27/5;
         public static final int TICKS_IN_ENCODER = 256;  
-        public static final double CIRCUMFARANCE = Math.PI * 0.0970; //DO NOT CHANGE!!!!
+        public static final double CIRCUMFARANCE = Math.PI * Units.inchesToMeters(4); //DO NOT CHANGE!!!!
         public static final double ONE_WHEEL_TO_TICKS = GEAR_RATIO_ENCODER * TICKS_IN_ENCODER;
 
         public static final double RATIO_TICKS_TO_METERS = CIRCUMFARANCE / ONE_WHEEL_TO_TICKS;
@@ -76,5 +76,17 @@ public final class Constants {
     public static final class PneuomaticsConstants {
         public static final int FIRST_SOLENOID_PORT = 1;
         public static final int SECOND_SOLENOID_PORT = 0;
+    }
+
+    public static final class ConstantsForPath {
+        public static final double RIGHT_SETPOINT_ONE = 1.20;
+        public static final double RIGHT_SETPOINT_TWO = 2.35;
+        public static final double RIGHT_SETPOINT_THREE = 3.06;
+        public static final double RIGHT_SETPOINT_FOUR = 3.74;
+
+        public static final double LEFT_SETPOINT_ONE = 0.87;
+        public static final double LEFT_SETPOINT_TWO = 1.58;
+        public static final double LEFT_SETPOINT_THREE = 2.65;
+        public static final double LEFT_SETPOINT_FOUR = 3.71;
     }
 }

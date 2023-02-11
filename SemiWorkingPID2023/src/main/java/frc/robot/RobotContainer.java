@@ -27,6 +27,7 @@ import frc.robot.Constants.PidConstants;
 import frc.robot.commands.CollectBySpeed;
 import frc.robot.commands.DriveByDistance;
 import frc.robot.commands.DriveBySpeed;
+import frc.robot.commands.DriveCreatedPath;
 import frc.robot.commands.ShifterChangerCommand;
 import frc.robot.commands.ShootBySpeed;
 import frc.robot.subsystems.Chassis;
@@ -115,7 +116,10 @@ public class RobotContainer {
     shootButton.whileTrue(new ShootBySpeed(shooter));
 
     JoystickButton Ramsete = new JoystickButton(xboxController, XboxController.Button.kX.value);
-    Ramsete.onTrue(loadPathplannerTrajectory("paths/TwoMeterCoolPath.wpilib.json", true));
+    Ramsete.onTrue(loadPathplannerTrajectory("paths/TurningPath.wpilib.json", true));
+
+    //JoystickButton DrivePath = new JoystickButton(xboxController, XboxController.Button.kX.value);
+    //DrivePath.onTrue(new DriveCreatedPath(chassis));
   }
 
   ///home/lvuser/deploy/src/main/deploy/pathplanner/generatedJSON/StraigthShort.wpilib.json
