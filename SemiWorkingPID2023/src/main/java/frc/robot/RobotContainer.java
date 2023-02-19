@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -17,35 +15,27 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.math.trajectory.TrajectoryParameterizer.TrajectoryGenerationException;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.JoystickConstants;
 import frc.robot.Constants.PidConstants;
 import frc.robot.commands.CollectBySpeed;
 import frc.robot.commands.DriveByDistance;
 import frc.robot.commands.DriveBySpeed;
-import frc.robot.commands.DriveCreatedPath;
-import frc.robot.commands.ShifterChangerCommand;
+import frc.robot.commands.JokerRamseteFollowCommands;
+import frc.robot.commands.JokerRamseteRotateDrive;
+import frc.robot.commands.JokerRamsteTranslateDrive;
 import frc.robot.commands.ShootBySpeed;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.Collector;
-import frc.robot.subsystems.PneuomaticsSubsystem;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.JoystickConstants.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -185,7 +175,6 @@ public class RobotContainer {
     //driveMeterOne.onTrue(new DriveByDistance());
     JoystickButton collectButton = new JoystickButton(joystick, Constants.JoystickConstants.BUTTON_NUMBER_COLLECT);
     collectButton.whileTrue(new CollectBySpeed(collector));
-    JoystickButton ChangeShifterState = new JoystickButton(joystick, 2);
     //ChangeShifterState.onTrue(new ShifterChangerCommand(pneuomaticsSubsystem));
 
     JoystickButton shootButton = new JoystickButton(joystick, Constants.JoystickConstants.BUTTON_NUMBER_SHOOT);
@@ -198,8 +187,21 @@ public class RobotContainer {
     //JoystickButton Ramsete = new JoystickButton(xboxController, XboxController.Button.kX.value);
     //Ramsete.onTrue(loadPathplannerTrajectory("paths/TwoMetersPath.wpilib.json", true));
 
-    JoystickButton DrivePath = new JoystickButton(xboxController, XboxController.Button.kX.value);
-    DrivePath.onTrue(createRamseteCommand());
+    //JoystickButton DrivePath = new JoystickButton(xboxController, XboxController.Button.kX.value);
+    //DrivePath.onTrue(createRamseteCommand());
+
+    //JOKER RAMSETE COMMAND:
+    JoystickButton JokerRamseteCommand = new JoystickButton(xboxController, XboxController.Button.kX.value);
+    JokerRamseteCommand.onTrue(new JokerRamseteFollowCommands(returnCommandsPath(), chassis));
+  }
+
+  public CommandBase[] returnCommandsPath() {
+    CommandBase[] commands = new CommandBase[3];
+    commands[0] = new JokerRamsteTranslateDrive(chassis, 1, 1);
+    commands[1] = new JokerRamseteRotateDrive(chassis, 90);
+    commands[2] = new JokerRamsteTranslateDrive(chassis, 1, 1);
+
+    return commands;
   }
 
   ///home/lvuser/deploy/src/main/deploy/pathplanner/generatedJSON/StraigthShort.wpilib.json

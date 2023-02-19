@@ -5,14 +5,12 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -27,21 +25,12 @@ public class Chassis extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   public static double distantceTraveled;
 
-  
-  private double Xdisplacement = 0;
-  private double Ydisplacement = 0;
-  private double Zdisplacement = 0;
-
-  private double overallSpeed = 0;
-  private double Xacceleration = 0;
-  private double Yvelocity = 0;
-  private double Zvelocity = 0;
   private final WPI_TalonSRX rightMotor;
   private final WPI_TalonSRX leftMotor;
   private final WPI_TalonSRX rightSlaveMotor;
   private final WPI_TalonSRX leftSlaveMotor;
 
-  private final MotorControllerGroup righMotorControllerGroup;
+  private final MotorControllerGroup rightMotorControllerGroup;
   private final MotorControllerGroup leftMotorControllerGroup;
 
   public static int counter;
@@ -117,11 +106,11 @@ public class Chassis extends SubsystemBase {
     leftEncoder.setDistancePerPulse(Constants.PidConstants.RATIO_TICKS_TO_METERS);
     rightEncoder.setDistancePerPulse(Constants.PidConstants.RATIO_TICKS_TO_METERS);
 
-    righMotorControllerGroup = new MotorControllerGroup(rightMotor, rightSlaveMotor);
+    rightMotorControllerGroup = new MotorControllerGroup(rightMotor, rightSlaveMotor);
     leftMotorControllerGroup = new MotorControllerGroup(leftMotor, leftSlaveMotor);
     leftMotorControllerGroup.setInverted(true);
     
-    differentialDrive = new DifferentialDrive(leftMotorControllerGroup, righMotorControllerGroup);
+    differentialDrive = new DifferentialDrive(leftMotorControllerGroup, rightMotorControllerGroup);
 
     navXGyro.resetDisplacement();
     navXGyro.reset();
@@ -171,7 +160,7 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putNumber("PID Value Right", pidController.calculate(rightEncoder.getDistance(), rightsetPoint));
     SmartDashboard.putNumber("PID Value Left", pidController.calculate(leftEncoder.getDistance(), leftSetpoint));
     leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), leftSetpoint)));
-    righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), rightsetPoint)));
+    rightMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), rightsetPoint)));
 
     if (previousLeftEncoderValue == leftEncoder.getDistance() && previousRightEncoderValue == rightEncoder.getDistance() && previousLeftEncoderValue != 0 && previousRightEncoderValue != 0 )
       return true;
@@ -263,7 +252,7 @@ public class Chassis extends SubsystemBase {
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     counter++;
     SmartDashboard.putNumber("This was called - times", counter);
-    righMotorControllerGroup.setVoltage(rightVolts*10/12);
+    rightMotorControllerGroup.setVoltage(rightVolts*10/12);
     leftMotorControllerGroup.setVoltage(leftVolts*10/12);
     /*rightMotor.configVoltageCompSaturation(rightVolts);
     leftMotor.configVoltageCompSaturation(leftVolts);
@@ -273,13 +262,13 @@ public class Chassis extends SubsystemBase {
   }
   //-------------------------------------------------------
   public void stopDriving() {
-    righMotorControllerGroup.set(0);
+    rightMotorControllerGroup.set(0);
     leftMotorControllerGroup.set(0);
   }
 
   public void autonomousDrive()
   {
-    righMotorControllerGroup.set(pidController.calculate(rightEncoder.getDistance(), PidConstants.SET_POINT));
+    rightMotorControllerGroup.set(pidController.calculate(rightEncoder.getDistance(), PidConstants.SET_POINT));
     leftMotorControllerGroup.set(pidController.calculate(-1 * leftEncoder.getDistance(), PidConstants.SET_POINT));
   }
 
@@ -361,7 +350,7 @@ public class Chassis extends SubsystemBase {
       if (finishedSegments[i] = false)
       {
         leftMotorControllerGroup.set(1 * pidController.calculate(-1 * leftEncoder.getDistance(), Constants.ConstantsForPath.LEFT_SETPOINTS[i]));
-        righMotorControllerGroup.set(1 * pidController.calculate(1 * rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINTS[i]));
+        rightMotorControllerGroup.set(1 * pidController.calculate(1 * rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINTS[i]));
 
         if (i == finishedSegments.length - 1)
           finishedSegments[i] = finishedSegmentsMoreSegments(i, 0.01);
@@ -392,32 +381,88 @@ public class Chassis extends SubsystemBase {
     if (!finishedPartOne)
     {
       leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.ConstantsForPath.LEFT_SETPOINT_ONE)));
-      righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_ONE)));
+      rightMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_ONE)));
 
       finishedPartOne = finishedPathSegment(1, 0.03);
     }
     else if (!finishedPartTwo)
     {
       leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.ConstantsForPath.LEFT_SETPOINT_TWO)));
-      righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_TWO)));
+      rightMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_TWO)));
 
       finishedPartTwo = finishedPathSegment(2, 0.03);
     }
     else if (!finishedPartThree)
     {
       leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.ConstantsForPath.LEFT_SETPOINT_THREE)));
-      righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_THREE)));
+      rightMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_THREE)));
 
       finishedPartThree = finishedPathSegment(3, 0.03);
     }
     else if (!finishedPartFour)
     {
       leftMotorControllerGroup.set(1 * (pidController.calculate(-1 * leftEncoder.getDistance(), Constants.ConstantsForPath.LEFT_SETPOINT_FOUR)));
-      righMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_FOUR)));
+      rightMotorControllerGroup.set(1 * (pidController.calculate(rightEncoder.getDistance(), Constants.ConstantsForPath.RIGHT_SETPOINT_FOUR)));
 
       finishedPartFour = finishedPathSegment(4, 0.01);
     }
 
     return finishedPartFour;
+  }
+
+  /*
+   * THE JOKER RAMSETTE COMMAND:
+   * 
+   * - Functions for turning the robot in the z axis at the current location
+   * - Function for doing pid calculations based on measurment and input
+   * - Functions the gives the motors ouput
+   */
+
+  public boolean ReachWantedAngle(double wantedAngle)
+  {
+    double currentAngle = navXGyro.getYaw() < 0 ? navXGyro.getYaw() + 360 : navXGyro.getYaw();
+
+    double distantceClockwise = wantedAngle - currentAngle;
+    distantceClockwise += distantceClockwise < 0 ? 360 : 0;
+    double distantceAgainstClockwise = 360 - distantceClockwise;
+
+    if (Math.min(distantceClockwise, distantceAgainstClockwise) < 1)
+    {
+      return true;
+    }
+
+    if (distantceClockwise < distantceAgainstClockwise)
+    {
+      double turningSpeed = pidController.calculate(distantceClockwise, 0);
+      if (turningSpeed < 0.1)
+        turningSpeed = 0.1;
+
+      rightMotorControllerGroup.set(-turningSpeed);
+      leftMotorControllerGroup.set(turningSpeed);
+      return false;
+    }
+    else
+    {
+      double turningSpeed = pidController.calculate(distantceAgainstClockwise, 0);
+      if (turningSpeed < 0.1)
+        turningSpeed = 0.1;
+
+      rightMotorControllerGroup.set(turningSpeed);
+      leftMotorControllerGroup.set(-turningSpeed);
+      return false;
+    }
+  }
+
+  //----------
+
+  public double pidCalculate(double measurement, double setpoint, int type) {
+    return pidController.calculate(measurement, setpoint);
+  }
+
+  //----------
+
+  public void setPowerToMotors(double rightValue, double leftValue) {
+    rightMotorControllerGroup.set(rightValue);
+    leftMotorControllerGroup.set(leftValue);
   }
 }
