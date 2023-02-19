@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -55,15 +56,17 @@ public final class Constants {
         public static final double Kv = 2.916;
         public static final double Ka = 4.3361;
 
-        public static final double kTrackWidth = 0.7;
+        public static final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(Ks, Kv, Ka);
+
+        public static final double kTrackWidth = 0.79;
         public static final DifferentialDriveKinematics kDifferentialDriveKinematics= new DifferentialDriveKinematics(kTrackWidth);
         public static final double kMaxSpeed = 3.0;
-        public static final double kMaxAcceleration = 3.0;
+        public static final double kMaxAcceleration = 1.0;
         public static final double kRemeseteB = 2;
         public static final double kRemeseteZeta = 0.7;
 
         public static final double TOLERANCE = 0.01; //6cm
-        public static final double SET_POINT = 5;
+        public static final double SET_POINT = 2;
         // TODO: Add calculation explaining why the gear ratio is 5.0:1
         public static final double GEAR_RATIO_ENCODER = (double)27/5;
         public static final int TICKS_IN_ENCODER = 256;  
@@ -88,5 +91,10 @@ public final class Constants {
         public static final double LEFT_SETPOINT_TWO = 1.58;
         public static final double LEFT_SETPOINT_THREE = 2.65;
         public static final double LEFT_SETPOINT_FOUR = 3.71;
+
+        //----------------------------------------------------
+
+        public static final double[] RIGHT_SETPOINTS = {0.89, 1.66, 2.42, 2.95, 3.48, 4.30, 4.79};
+        public static final double[] LEFT_SETPOINTS = {0.61, 1.74, 1.98, 2.64, 4.06, 4.79};
     }
 }

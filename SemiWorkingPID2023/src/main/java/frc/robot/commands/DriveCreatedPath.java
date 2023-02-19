@@ -4,39 +4,72 @@
 
 package frc.robot.commands;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.PidConstants;
 import frc.robot.subsystems.Chassis;
 
 public class DriveCreatedPath extends CommandBase {
   public Chassis chassis;
   public boolean finishedPath;
+  private OnyxRamseteCommand command;
+  private Trajectory trajectory;
 
   /** Creates a new DriveCreatedPath. */
-  public DriveCreatedPath(Chassis chassis) {
+  public DriveCreatedPath(Chassis chassis, Path path) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.chassis = chassis;
+    try {
+      this.trajectory = TrajectoryUtil.fromPathweaverJson(path);
+    } catch(IOException exception) {
+      DriverStation.reportError( exception.getMessage(), exception.getStackTrace());
+      this.trajectory = null;
+    }
+    
     addRequirements(chassis);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    chassis.resetEncoders();
+    command = new OnyxRamseteCommand(
+                trajectory,
+                chassis::getPose,
+                new RamseteController(),
+                PidConstants.feedforward,
+                PidConstants.feedforward,
+                PidConstants.kDifferentialDriveKinematics,
+                chassis::getWheelSpeeds,
+                new PIDController(PidConstants.Kp, 0, 0),
+                new PIDController(PidConstants.Kp, 0, 0),
+                chassis::tankDriveVolts,
+                chassis
+        );
+        command.initialize();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    finishedPath = chassis.followPath();
-  }
+    public void execute() {
+        SmartDashboard.getNumber("Gyro Heading", chassis.navXGyro.getRotation2d().getDegrees());
+        command.execute();
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+    @Override
+    public boolean isFinished() {
+        return command.isFinished();
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return finishedPath;
-  }
+    @Override
+    public void end(boolean interrupted) {
+        command.end(interrupted);
+        chassis.stopDriving();
+    }
 }

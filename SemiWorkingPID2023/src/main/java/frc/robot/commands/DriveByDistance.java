@@ -11,7 +11,14 @@ import frc.robot.subsystems.Chassis;
 
 public class DriveByDistance extends CommandBase {
 
-  private final Chassis DriveSystem = Chassis.getInstance();
+  public boolean firstMeterFinished;
+  public boolean justFinishedDrive;
+
+  public boolean turn90DegreesFinished;
+  public boolean finishedSecondMeter;
+
+  public boolean justFinishedTurning;
+  private final Chassis chassis = Chassis.getInstance();
   /** Creates a new DriveByDistance. */
   public DriveByDistance() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -20,14 +27,43 @@ public class DriveByDistance extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    DriveSystem.resetEncoders();
-    
+    /*firstMeterFinished = false;
+    turn90DegreesFinished = false;
+    finishedSecondMeter = false;
+
+    chassis.navXGyro.reset();
+    chassis.resetEncoders();*/
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    DriveSystem.autonomouseDrive();
+    /*if (!firstMeterFinished)
+    {
+      //firstMeterFinished = chassis.autonomouseDrive(1);
+      justFinishedDrive = firstMeterFinished;
+    }
+    else if (!turn90DegreesFinished)
+    {
+      if (justFinishedDrive)
+      {
+        justFinishedDrive = false;
+      }
+
+      turn90DegreesFinished = chassis.turnAngle(chassis.navXGyro.getYaw() + 90);
+      justFinishedTurning = turn90DegreesFinished;
+    }
+    else if (!finishedSecondMeter) {
+      if (justFinishedTurning)
+      {
+        justFinishedTurning = false;
+        chassis.resetEncoders();
+      }
+      
+      //finishedSecondMeter = chassis.autonomouseDrive(1);
+    }*/
+    chassis.autonomousDrive();
+
   }
 
   // Called once the command ends or is interrupted.
