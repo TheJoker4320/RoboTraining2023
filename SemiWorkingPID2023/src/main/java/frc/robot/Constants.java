@@ -96,4 +96,10 @@ public final class Constants {
         public static final double[] RIGHT_SETPOINTS = {0.89, 1.66, 2.42, 2.95, 3.48, 4.30, 4.79};
         public static final double[] LEFT_SETPOINTS = {0.61, 1.74, 1.98, 2.64, 4.06, 4.79};
     }
+    public static final class DriveByTimeConstants{
+        public static final double DRIVE_BY_TIME_SPEED=1.0;
+        public static final double  SET_TIME_TO_GAME_PIECES=5.69;
+        public static final double  SET_TIME_TO_RAMP=2.45;
+
+    }
 }

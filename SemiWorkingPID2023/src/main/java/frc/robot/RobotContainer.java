@@ -191,8 +191,9 @@ public class RobotContainer {
     //DrivePath.onTrue(createRamseteCommand());
 
     //JOKER RAMSETE COMMAND:
-    JoystickButton JokerRamseteCommand = new JoystickButton(xboxController, XboxController.Button.kX.value);
-    JokerRamseteCommand.onTrue(new JokerRamseteFollowCommands(returnCommandsPath(), chassis));
+    // JoystickButton JokerRamseteCommand = new JoystickButton(xboxController, XboxController.Button.kX.value);
+    // JokerRamseteCommand.onTrue(new JokerRamseteFollowCommands(returnCommandsPath(), chassis));
+    
   }
 
   public CommandBase[] returnCommandsPath() {
@@ -213,6 +214,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new DriveByDistance();
+    
+    return new JokerRamseteFollowCommands(returnCommandsPath(), chassis);
   }
 }
